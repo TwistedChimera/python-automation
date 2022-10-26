@@ -1,6 +1,8 @@
 import shutil, re, os
 
-# TODO: regex for american dates
+# regex for american dates
+# NOTE: can't differentiate us & eur
+#       when DD & MM are both <= 12
 usdateRegex = re.compile(r'''
 (?P<DATE>
   (?P<MM>
@@ -59,12 +61,35 @@ def scanTree(rootDir):
             # change US to EUR date
             if len(date) > 0:
                 print('found us date:  ' + name)
-                newname = swaptext(name, date[0][1], date[0][3])
+                newname = str(swaptext(name, date[0][1], date[0][3]))
                 print('us to eur date: ' + newname)
                 print()
-                
+
+# doesn't swap unless a and b are consecutive                
 def swaptext(text, a, b):
-    return b.join(part.replace(b, a) for part in text.split(a))
+    ''' global swap which breaks on some edge cases '''
+    ''' stack overflow solution '''
+    #return b.join(part.replace(b, a) for part in text.split(a))
+    ''' ----------------------- '''
+    ''' single swap implementation '''
+    # add separator (-) to lessen false positives
+    a += '-'
+    b += '-'
+    aindex = text.index(a)
+    alen = aindex + len(a)
+    bindex = text.index(b)
+    blen = bindex + len(b)
+    # if a > b, swap values to prevent IndexError
+    # and if they're next to each other (not necessary though)
+    if((aindex > bindex) and (aindex - bindex == len(b))):
+        aindex, bindex = bindex, aindex
+        alen, blen = blen, alen
+        a, b = b, a
+    # swap a and b and only if they're next to each other
+    if((bindex > aindex) and (bindex - aindex == len(a))):
+        return text[:aindex] + text[bindex:blen] + text[aindex:alen] + text[blen:]
+    else:
+        print('ERR: swaptext')
 
 
 workDir = DEBUG_askDirectory()
