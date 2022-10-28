@@ -15,15 +15,15 @@ usdateRegex = re.compile(r'''
         # if False, second digit can't be 2 or 3
         |(?<![123])\d
     )
-  )
+  [-]) # include separator (-)
   
-  [-]
+  
   
   (?P<DD>
     [0123]?\d
-  )
+  [-]) # include separator (-)
   
-  [-]
+  
   
   (?P<YYYY>
     [12]\d\d\d
@@ -54,27 +54,35 @@ def DEBUG_askDirectory():
 
 # TODO: scan whole directory
 def scanTree(rootDir):
+    os.chdir(rootDir)
     for root, dirs, files in os.walk(rootDir):
         for name in files:
             date = re.findall(usdateRegex, name)
             newname = name
             # change US to EUR date
             if len(date) > 0:
+                # Dry run
+                '''
                 print('found us date:  ' + name)
                 newname = str(swaptext(name, date[0][1], date[0][3]))
                 print('us to eur date: ' + newname)
                 print()
+                '''
+                # TODO: rename files
+                shutil.move(name,newname)
 
 # doesn't swap unless a and b are consecutive                
 def swaptext(text, a, b):
-    ''' global swap which breaks on some edge cases '''
-    ''' stack overflow solution '''
+    
+    ## global swap which can overmatch ##
+    
+    # stack overflow solution:
     #return b.join(part.replace(b, a) for part in text.split(a))
+    
     ''' ----------------------- '''
-    ''' single swap implementation '''
-    # add separator (-) to lessen false positives
-    a += '-'
-    b += '-'
+    
+    ## single swap implementation ##
+    
     aindex = text.index(a)
     alen = aindex + len(a)
     bindex = text.index(b)
@@ -90,6 +98,7 @@ def swaptext(text, a, b):
         return text[:aindex] + text[bindex:blen] + text[aindex:alen] + text[blen:]
     else:
         print('ERR: swaptext')
+
 
 
 workDir = DEBUG_askDirectory()
