@@ -10,47 +10,79 @@ selectiveCopy.py
     
 '''
 
-import sys, os
+import sys, os, re, shutil
 
 args = sys.argv
-argsl = len(args)
+argsl = len(args) - 1 # don't include first element
 
-def askSrc():
-    workDir = ''
-    # if absolute directory & exists
-    while not (os.path.isabs(workDir) and os.path.exists(workDir)):
-        workDir = input('Source: ')
-    return workDir
 
-def askDst():
-    workDir = ''
-    # if absolute path & doesn't exist
-    # not ( True and (not False) ) == break
-    while not (os.path.isabs(workDir) and (not os.path.exists(workDir))):
-        workDir = input('Destination: ')
-    return workDir
 
-def askExtension():
-    return input('Extension: ')
 
-def copy():
-    # Handle first argument
-    if not (argsl >= 2 and arsgl <= 4):
-        src = askSrc()
-    else:
-        src = args[2]
-    # Handle second argument   
-    if not (argsl >= 3 and arsgl <= 4):
-        dst = askDst()
-    else:
-        dst = args[3]
-    # Handle third argument    
-    if not (argsl == 4):
-        ext = askExtension()
-    else:
-        ext = args[4]
+def getSrc():
+    global args
+    # initialize
+    src = ''
+    # if source is supplied as argument
+    if (argsl>=1 and argsl<=3):
+        src = args[1]
+    # if absolute path & is a directory
+    while not (os.path.isabs(src) and os.path.isdir(src)):
+        src = input('Source: ')
+    return src
 
-    txt = '1:{}\n2:{}\n3:{}'
-    print(txt.format(src, dst, ext))
+def getDst():
+    global args
+    # initialize 
+    dst = ''
+    # if destination is supplied as argument
+    if (argsl>=2 and argsl<=3):
+        dst = args[2]
+    # if absolute path & doesn't exist & is a directory
+    # not ( True and (not False) and True) == break
+    while not (os.path.isabs(dst) and (not os.path.exists(dst))):
+        dst = input('Destination: ')
+    return dst
 
-copy()
+def getExt():
+    global args
+    # initialize
+    ext = ''
+    # if extension is supplied as argument
+    if (argsl == 3):
+        ext = args[3]
+    # loop while ext is empty
+    while(ext == ''):
+        ext = input('Extension: ')
+    return ext
+
+def main():
+    src = getSrc()
+    dst = getDst()
+    ext = getExt()
+
+    pattern = r'''.*[.]''' + ext + '$'
+    extRegex = re.compile(pattern)
+    
+    # move to source folder
+    os.chdir(src)
+    # uncomment 1/2 to actually copy
+    #os.mkdir(dst)
+    
+    # walk source folder tree
+    matches = []
+    for pwd, folders, files in os.walk(src):
+        for name in files:
+            matchList = re.findall(extRegex, name)
+            if len(matchList) == 1:
+                matches.append(os.path.join(pwd,matchList[0]))
+                # uncomment 2/2 to actually copy
+                #shutil.copy(os.path.join(pwd,matchList[0]),dst)
+                
+    txt = 'matches: {}'
+    for name in matches:
+        print(txt.format(name))
+            
+            
+    
+
+main()
