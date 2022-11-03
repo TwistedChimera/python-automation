@@ -1,6 +1,6 @@
 import logging, re, pyperclip, time
 import webbrowser, sys, requests
-from bs4 import BeautifulSoup, NavigableString
+from bs4 import BeautifulSoup
 
 # logging
 FORMAT='%(asctime)s - %(levelname)s - %(message)s'
@@ -49,8 +49,9 @@ for item in results:
 # look behind and ahead for '/url?q=' and '&sa=U&ved=', respectively.
 urlRegex = re.compile(r'(?<=\/url\?q=).*(?=&sa=U&ved=)')
 # only open first 5 urls
-for item in output[0:6]: 
-    if '/url?q=' in item:
+for item in output[0:6]:
+    # if url has /url?q= and isn't a youtube link
+    if ('/url?q=' in item) and not ('youtube' in item):
         logging.info(re.findall(urlRegex, item)[0])
         webbrowser.open(re.findall(urlRegex, item)[0])
         time.sleep(1)
