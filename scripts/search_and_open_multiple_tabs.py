@@ -1,4 +1,4 @@
-import logging, re, pyperclip, time
+import logging, re, time
 import webbrowser, sys, requests
 from bs4 import BeautifulSoup
 
