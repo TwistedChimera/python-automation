@@ -91,8 +91,10 @@ while True:
             logging.info('Moving to next page: ' + page)
             print('Moving to next page: ' + page)
     except KeyboardInterrupt:
+        # cleanly close and delete (presumably corrupted) file
         file = open(file_name, 'wb')
         file.close()
+        os.unlink(file_name)
         print('Ctrl+c detected, exiting . . .')
         sys.exit()
 
