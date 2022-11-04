@@ -47,8 +47,8 @@ for item in results:
 
 logging.debug('Opening 5 urls')
 
-# clean urls (links are surrounded with '/url?q=' and '&sa=U&ved='
-# look behind and ahead for '/url?q=' and '&sa=U&ved=', respectively.
+# clean urls (links are surrounded with '&url=' and '&ved='
+# change regex when necessary
 urlRegex = re.compile(r'(?<=&url=).*(?=&ved=)')
 # only open urls that isn't youtube
 counter = 0;
