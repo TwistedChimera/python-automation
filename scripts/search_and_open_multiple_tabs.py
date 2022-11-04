@@ -27,7 +27,7 @@ else:
     search_query = input('search query: ')
 
 # request url and get soup
-res = requests.get(search_url + search_query)
+res = requests.get(search_url + search_query, headers=headers)
 res.raise_for_status() # raise exception on bad status
 soup = BeautifulSoup(res.content, 'lxml')
 
@@ -45,15 +45,24 @@ for item in results:
                 logging.info(item3['href'])
                 output.append(item3['href'])
 
+logging.debug('Opening 5 urls')
+
 # clean urls (links are surrounded with '/url?q=' and '&sa=U&ved='
 # look behind and ahead for '/url?q=' and '&sa=U&ved=', respectively.
-urlRegex = re.compile(r'(?<=\/url\?q=).*(?=&sa=U&ved=)')
-# only open first 5 urls
-for item in output[0:6]:
-    # if url has /url?q= and isn't a youtube link
-    if ('/url?q=' in item) and not ('youtube' in item):
-        logging.info(re.findall(urlRegex, item)[0])
-        webbrowser.open(re.findall(urlRegex, item)[0])
-        time.sleep(1)
+urlRegex = re.compile(r'(?<=&url=).*(?=&ved=)')
+# only open urls that isn't youtube
+counter = 0;
+for url in output:
+    if not ('youtube.com' in url):
+        logging.info(re.findall(urlRegex, url)[0])
+        webbrowser.open(re.findall(urlRegex, url)[0])
+        
+        # only for the first 5 urls
+        counter += 1
+        if counter == 5:
+            break
+
+        # no need to sleep on last loop
+        time.sleep(2)
         
 logging.debug('End of program')
