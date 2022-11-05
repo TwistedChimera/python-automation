@@ -4,7 +4,7 @@ from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 
-browser = webdriver.Firefox(service=Service(GeckoDriverManager(path = r".\\Drivers").install()))
+browser = webdriver.Firefox(service=Service(GeckoDriverManager(path = r"C:\\Users\\sulla\\Jayson\\workspace\\python-automation\\scripts\\Drivers").install()))
 browser.get('https://inventwithpython.com')
 try:
     elem = browser.find_element(By.CLASS_NAME, 'card-img-top')
