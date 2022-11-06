@@ -2,3 +2,6 @@
 scripts/xkcd
 scripts/Drivers
 Drivers
+*.bak
+*.dat
+*.dir
