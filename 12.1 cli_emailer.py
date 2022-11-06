@@ -1,12 +1,12 @@
 #! Python3
 '''
-cli_emailer.py
+cli_emailer.py (wip)
 
     sends email using arguments
 
 '''
 
-import time
+import time, traceback
 
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service
@@ -19,12 +19,10 @@ from selenium.webdriver.support import expected_conditions as EC
 browser = webdriver.Firefox(service=Service(GeckoDriverManager(path = r".\\Drivers").install()))
 browser.get('https://account.proton.me/login')
 
-
-failtxt = 'failed to find {}'
-passtxt = 'found {}'
 wait = WebDriverWait(browser, 60)
 try:
-    username = wait.until(EC.element_to_be_clickable(By.ID, 'username'))
-    print(passtxt.format('username'))
+    wait.until(EC.visibility_of_element_located((By.ID, 'username')))
+    element = browser.find_element(By.ID, 'username')
+    element.send_keys('asdf')
 except:
-    print(failtxt.format('username'))
+    print(traceback.format_exc())
