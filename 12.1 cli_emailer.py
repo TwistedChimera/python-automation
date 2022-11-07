@@ -5,6 +5,7 @@ cli_emailer.py (wip)
     sends email using arguments
 
 '''
+# Logging
 
 
 # House keeping
@@ -54,14 +55,18 @@ try:
     # once found, click button
     msg = browser.find_element(By.CSS_SELECTOR, '.button-large')
     msg.click()
-    # wait for editor to appear
-    wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.editor')))
+    # wait focus to shift: 'To' textbox
+    wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'field-focused')))
     # send keys to element in focus: 'To:' textbox)
     to_elem = browser.switch_to.active_element
     to_elem.send_keys('recepient_here')
     to_elem.send_keys(Keys.TAB)
-    # TODO: add logic to detect that focus is shifted
-    to_elem.send_keys('subject_here')    
+    # wait until focus is shifted
+    while to_elem == browser.switch_to.active_element:
+        pass
+    # write in subject
+    subj_elem = browser.switch_to.active_element
+    subj_elem.send_keys('subject_here')    
     
 except:
     print(traceback.format_exc())
