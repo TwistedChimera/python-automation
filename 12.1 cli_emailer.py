@@ -6,7 +6,12 @@ cli_emailer.py (wip)
 
 '''
 # Logging
+FORMAT='%(asctime)s - %(levelname)s - %(message)s'
+logging.basicConfig(level=logging.DEBUG, format=FORMAT)
+# uncomment to disable log messages
+logging.disable(logging.CRITICAL)
 
+logging.debug('Start of program')
 
 # House keeping
 import traceback, shelve
@@ -70,3 +75,5 @@ try:
     
 except:
     print(traceback.format_exc())
+
+logging.debug('End of program')
